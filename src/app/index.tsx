@@ -10,7 +10,7 @@ export default function Page() {
           <Text style={styles.title}>Hello World</Text>
           <Text style={styles.subtitle}>This is the first page of your app.</Text>
         </View>
-        <Link href={{ pathname: '/details', params: { name: 'Dan' } }} asChild>
+        <Link href={{ pathname: '/signIn', params: { name: 'Dan' } }} asChild>
           <TouchableOpacity style={styles.button}>
             <Text style={styles.buttonText}>Show Details</Text>
           </TouchableOpacity>

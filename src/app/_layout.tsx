@@ -4,8 +4,9 @@ import { Stack, SplashScreen } from 'expo-router';
 import { NativeBaseProvider } from 'native-base';
 import { useEffect } from 'react';
 import { StatusBar } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Loading } from '../components/Loading';
+import { THEME } from '@/theme';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -36,16 +37,18 @@ export default function Layout() {
   }, [loaded]);
 
   if (!loaded) {
-    return <Loading />;
+    return null;
   }
   return <StackRoutes />;
 }
 
 function StackRoutes() {
   return (
-    <NativeBaseProvider>
-      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />;
-      <Stack />;
-    </NativeBaseProvider>
+    <SafeAreaView style={{ flex: 1 }}>
+      <NativeBaseProvider theme={THEME}>
+        <StatusBar barStyle="default" backgroundColor="transparent" translucent />
+        <Stack screenOptions={{ headerShown: false }} />
+      </NativeBaseProvider>
+    </SafeAreaView>
   );
 }
