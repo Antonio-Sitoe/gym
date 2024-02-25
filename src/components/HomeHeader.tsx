@@ -6,9 +6,9 @@ import { UserPhoto } from './UserPhoto';
 
 export function HomeHeader() {
   return (
-    <HStack bg="gray.600" pt={16} pb={5} px={8} alignItems="center">
+    <HStack bg="gray.600" pt={5} pb={5} px={8} alignItems="center">
       <UserPhoto 
-        source={{ uri: 'https://github.com/rodrigorgtic.png' }}
+        source={{ uri: 'https://github.com/antonio-sitoe.png' }}
         size={16}
         alt="Imagem do usuário"
         mr={4}

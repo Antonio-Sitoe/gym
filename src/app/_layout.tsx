@@ -1,10 +1,11 @@
 import { Roboto_400Regular, Roboto_700Bold } from "@expo-google-fonts/roboto";
-import { NativeBaseProvider } from "native-base";
+import { NativeBaseProvider, theme } from "native-base";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { useEffect } from "react";
 import { StatusBar } from "react-native";
 import { THEME } from "../theme";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -13,7 +14,7 @@ export {
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: "(tabs)",
+  initialRouteName: "(auth)",
 };
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -45,12 +46,18 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   return (
-    <NativeBaseProvider theme={THEME}>
-      <StatusBar barStyle="default" backgroundColor="transparent" translucent />
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: "modal" }} />
-      </Stack>
-    </NativeBaseProvider>
+    <SafeAreaView style={{ flex: 1, backgroundColor: THEME.colors.gray[700] }}>
+      <NativeBaseProvider theme={THEME}>
+        <StatusBar
+          barStyle="dark-content"
+          backgroundColor="transparent"
+          translucent
+        />
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="(auth)" />
+          <Stack.Screen name="(tabs)" />
+        </Stack>
+      </NativeBaseProvider>
+    </SafeAreaView>
   );
 }

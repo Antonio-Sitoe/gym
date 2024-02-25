@@ -1,55 +1,68 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, Tabs } from 'expo-router';
-import { Pressable, useColorScheme } from 'react-native';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { Tabs } from "expo-router";
+import { useTheme } from "native-base";
 
-
-/**
- * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
- */
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>['name'];
-  color: string;
-}) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
-}
+import Home from "@/assets/home.svg";
+import HistorySvg from "@/assets/history.svg";
+import ProfileSvg from "@/assets/profile.svg";
+import { Platform, StatusBar } from "react-native";
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const { sizes, colors } = useTheme();
+  const iconSize = sizes[6];
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: 'red',
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="info-circle"
-                    size={25}
-                    color={Colors[colorScheme ?? 'light'].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          ),
-        }}
+    <>
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor="transparent"
+        translucent
       />
-      <Tabs.Screen
-        name="two"
-        options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+      <Tabs
+        screenOptions={{
+          tabBarActiveTintColor: "red",
+          headerShown: false,
+          tabBarShowLabel: false,
+          tabBarInactiveTintColor: colors.gray[200],
+          tabBarStyle: {
+            backgroundColor: colors.gray[600],
+            borderTopWidth: 0,
+            height: Platform.OS === "android" ? "auto" : 96,
+            paddingBottom: sizes[10],
+            paddingTop: sizes[6],
+          },
         }}
-      />
-    </Tabs>
+      >
+        <Tabs.Screen
+          name="index"
+          options={{
+            tabBarIcon: ({ color }) => (
+              <Home fill={color} width={iconSize} height={iconSize} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="History"
+          options={{
+            tabBarIcon: ({ color }) => (
+              <HistorySvg fill={color} width={iconSize} height={iconSize} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="Profile"
+          options={{
+            tabBarIcon: ({ color }) => (
+              <ProfileSvg fill={color} width={iconSize} height={iconSize} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="Exercicies"
+          options={{
+            tabBarButton: () => null,
+          }}
+        />
+      </Tabs>
+    </>
   );
 }
