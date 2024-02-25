@@ -18,6 +18,7 @@ export default function TabLayout() {
         translucent
       />
       <Tabs
+       initialRouteName="home"
         screenOptions={{
           tabBarActiveTintColor: "red",
           headerShown: false,
@@ -33,7 +34,7 @@ export default function TabLayout() {
         }}
       >
         <Tabs.Screen
-          name="index"
+          name="home"
           options={{
             tabBarIcon: ({ color }) => (
               <Home fill={color} width={iconSize} height={iconSize} />
@@ -54,12 +55,6 @@ export default function TabLayout() {
             tabBarIcon: ({ color }) => (
               <ProfileSvg fill={color} width={iconSize} height={iconSize} />
             ),
-          }}
-        />
-        <Tabs.Screen
-          name="Exercises"
-          options={{
-            tabBarButton: () => null,
           }}
         />
       </Tabs>

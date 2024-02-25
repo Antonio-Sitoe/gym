@@ -10,7 +10,7 @@ export default function signIn() {
   const { push } = useRouter();
 
   function handleCreate() {
-    push("/(tabs)/");
+    push("/(auth)/signUp");
   }
   return (
     <ScrollView

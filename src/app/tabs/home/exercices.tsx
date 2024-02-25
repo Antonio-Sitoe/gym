@@ -6,9 +6,13 @@ import BodySvg from "@/assets/body.svg";
 import SeriesSvg from "@/assets/series.svg";
 import RepetitionsSvg from "@/assets/repetitions.svg";
 import { Button } from "@/components/Button";
+import { useRouter } from "expo-router";
 
 export function Exercise() {
-  function handleGoBack() {}
+  const { back } = useRouter();
+  function handleGoBack() {
+    back()
+  }
 
   return (
     <VStack flex={1}>

@@ -6,7 +6,7 @@ import { FlatList, HStack, Heading, Text, VStack } from "native-base";
 import { useState } from "react";
 
 export default function Home() {
-  const { push } = useRouter();
+  const router = useRouter();
   const [groups, setGroups] = useState([
     "Costas",
     "Bíceps",
@@ -22,10 +22,11 @@ export default function Home() {
   const [groupSelected, setGroupSelected] = useState("Costas");
 
   function handleOpenExerciDetail() {
-    // push({
-    //   pathname: "/(tabs)/home/[id]",
-    //   params: {},
-    // });
+    console.log("dsdsd");
+    router.push({
+      pathname: "/tabs/home/exercices",
+      params: { id: 'bacon' }
+    });
   }
   return (
     <VStack flex={1} bg="gray.700">
@@ -49,6 +50,7 @@ export default function Home() {
         }}
         my={10}
         maxH={10}
+        minH={10}
       />
       <VStack px={8}>
         <HStack justifyContent="space-between" mb={5}>

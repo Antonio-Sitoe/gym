@@ -9,14 +9,56 @@ import {
   Skeleton,
   Text,
   VStack,
+  useToast,
 } from "native-base";
 import { useState } from "react";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import * as FileSystem from "expo-file-system";
+import * as ImagePicker from "expo-image-picker";
 
 const PHOTO_SIZE = 33;
 
+type props = FileSystem.FileInfo & {
+  size: number;
+};
+
 export default function TabTwoScreen() {
+  const toast = useToast();
   const [isLoadingPhoto, setIsLoadingPhoto] = useState(false);
+  const [userPhoto, setUserPhoto] = useState(
+    "https://github.com/antonio-sitoe.png"
+  );
+
+  async function handleUserPhotoSelected() {
+    setIsLoadingPhoto(true);
+    try {
+      const photoSelected = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 1,
+        aspect: [4, 4],
+        allowsEditing: true,
+      });
+      if (photoSelected.canceled) {
+        return;
+      }
+      const photoInfor = (await FileSystem.getInfoAsync(
+        photoSelected.assets[0].uri
+      )) as props;
+
+      if (photoInfor.exists.valueOf() && photoInfor.size / 1024 / 1024 > 5) {
+        return toast.show({
+          title: "Essa imagem e muito grande. Escola uma de ate 3MB",
+          bgColor: "red.500",
+          placement: "top",
+        });
+      }
+      setUserPhoto(photoSelected.assets[0].uri);
+    } catch (error) {
+      console.log("Erro ao buscar foto", error);
+    } finally {
+      setIsLoadingPhoto(false);
+    }
+  }
   return (
     <VStack flex={1} bg="gray.700">
       <ScreenHeader title="Perfil" />
@@ -34,10 +76,10 @@ export default function TabTwoScreen() {
             <UserPhoto
               alt="Foto do Usuario"
               size={PHOTO_SIZE}
-              source={{ uri: "https://github.com/antonio-sitoe.png" }}
+              source={{ uri: userPhoto }}
             />
           )}
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleUserPhotoSelected}>
             <Text
               color="green.500"
               fontWeight="bold"
@@ -64,8 +106,7 @@ export default function TabTwoScreen() {
             placeholder="Confirme nova Senha"
             secureTextEntry
           />
-          <Button title="Atualizar perfil"/>
-
+          <Button title="Atualizar perfil" />
         </VStack>
       </ScrollView>
     </VStack>
