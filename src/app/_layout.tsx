@@ -1,25 +1,25 @@
-import { Roboto_400Regular, Roboto_700Bold } from '@expo-google-fonts/roboto';
-import { useFonts } from 'expo-font';
-import { Stack, SplashScreen } from 'expo-router';
-import { NativeBaseProvider } from 'native-base';
-import { useEffect } from 'react';
-import { StatusBar } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-
-import { THEME } from '@/theme';
+import { Roboto_400Regular, Roboto_700Bold } from "@expo-google-fonts/roboto";
+import { NativeBaseProvider } from "native-base";
+import { useFonts } from "expo-font";
+import { SplashScreen, Stack } from "expo-router";
+import { useEffect } from "react";
+import { StatusBar } from "react-native";
+import { THEME } from "../theme";
 
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
-} from 'expo-router';
+} from "expo-router";
 
 export const unstable_settings = {
-  initialRouteName: '(tabs)',
+  // Ensure that reloading on `/modal` keeps a back button present.
+  initialRouteName: "(tabs)",
 };
 
+// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
-export default function Layout() {
+export default function RootLayout() {
   const [loaded, error] = useFonts({
     Roboto_400Regular,
     Roboto_700Bold,
@@ -39,16 +39,18 @@ export default function Layout() {
   if (!loaded) {
     return null;
   }
-  return <StackRoutes />;
+
+  return <RootLayoutNav />;
 }
 
-function StackRoutes() {
+function RootLayoutNav() {
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <NativeBaseProvider theme={THEME}>
-        <StatusBar barStyle="default" backgroundColor="transparent" translucent />
-        <Stack screenOptions={{ headerShown: false }} />
-      </NativeBaseProvider>
-    </SafeAreaView>
+    <NativeBaseProvider theme={THEME}>
+      <StatusBar barStyle="default" backgroundColor="transparent" translucent />
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="modal" options={{ presentation: "modal" }} />
+      </Stack>
+    </NativeBaseProvider>
   );
 }
