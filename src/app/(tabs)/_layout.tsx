@@ -57,7 +57,7 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="Exercicies"
+          name="Exercises"
           options={{
             tabBarButton: () => null,
           }}
