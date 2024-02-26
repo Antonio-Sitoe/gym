@@ -1,14 +1,28 @@
-import { Image, VStack, Text, Center, Heading, ScrollView } from "native-base";
+import {
+  Image,
+  VStack,
+  Text,
+  Center,
+  Heading,
+  ScrollView,
+  Toast,
+  useToast,
+} from "native-base";
 
 import BackgroundIMg from "../../assets/background.png";
 import Logo from "@/assets/logo.svg";
+import { api } from "@/lib/axios";
 import { Input } from "@/components/Input";
+import { Alert } from "react-native";
 import { Button } from "@/components/Button";
+import { useState } from "react";
 import { useRouter } from "expo-router";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, useForm } from "react-hook-form";
 
+import axios from "axios";
 import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { AppError } from "@/utlis/AppError";
 
 type FormDataProps = {
   name: string;
@@ -27,26 +41,46 @@ const signUpSchema = yup.object({
   password_confirm: yup
     .string()
     .required("Confirme a senha.")
-    .oneOf([yup.ref("password"), null  as any], "A confirmação da senha não confere"),
+    .oneOf(
+      [yup.ref("password"), null as any],
+      "A confirmação da senha não confere"
+    ),
 });
 
 export default function SignIn() {
+  const toast = useToast();
+  const [isSubmiting, setIsSubmitting] = useState(false);
   const {
     control,
     handleSubmit,
+
     formState: { errors },
   } = useForm<FormDataProps>({
     resolver: yupResolver(signUpSchema) as any,
   });
   const { push } = useRouter();
 
-  function handleSignUp({
-    name,
-    email,
-    password,
-    password_confirm,
-  }: FormDataProps) {
-    console.log({ name, email, password, password_confirm });
+  async function handleSignUp({ name, email, password }: FormDataProps) {
+    setIsSubmitting(true);
+    try {
+      const { data } = await api.post("/users", {
+        name,
+        email,
+        password,
+      });
+      console.log({ data });
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+      toast.show({
+        title: isAppError
+          ? error.message
+          : "Nao foi possivel criar a conta tente novamente mais tarde",
+        placement: "top",
+        bgColor: "red.500",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -136,6 +170,7 @@ export default function SignIn() {
           <Button
             title="Criar e acessar"
             onPress={handleSubmit(handleSignUp)}
+            isLoading={isSubmiting}
           />
         </Center>
 
