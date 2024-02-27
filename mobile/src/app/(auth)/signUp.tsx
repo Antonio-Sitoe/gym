@@ -23,6 +23,7 @@ import { Controller, useForm } from "react-hook-form";
 import axios from "axios";
 import * as yup from "yup";
 import { AppError } from "@/utlis/AppError";
+import { useAuth } from "@/contexts/AuthContext";
 
 type FormDataProps = {
   name: string;
@@ -49,6 +50,7 @@ const signUpSchema = yup.object({
 
 export default function SignIn() {
   const toast = useToast();
+  const { signInFn } = useAuth();
   const [isSubmiting, setIsSubmitting] = useState(false);
   const {
     control,
@@ -69,6 +71,9 @@ export default function SignIn() {
         password,
       });
       console.log({ data });
+      if (data) {
+        await signInFn({ email, password });
+      }
     } catch (error) {
       const isAppError = error instanceof AppError;
       toast.show({

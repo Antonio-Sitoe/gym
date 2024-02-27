@@ -1,13 +1,61 @@
-import { Image, VStack, Text, Center, Heading, ScrollView } from "native-base";
+import {
+  Image,
+  VStack,
+  Text,
+  Center,
+  Heading,
+  ScrollView,
+  useToast,
+} from "native-base";
 
 import BackgroundIMg from "../../assets/background.png";
 import Logo from "@/assets/logo.svg";
+
 import { Input } from "@/components/Input";
 import { Button } from "@/components/Button";
 import { useRouter } from "expo-router";
+import { Controller, useForm } from "react-hook-form";
+import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { AppError } from "@/utlis/AppError";
 
 export default function signIn() {
+  const { signInFn } = useAuth();
+  const toast = useToast();
+  const [isSubmiting, setIsSubmitting] = useState(false);
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
   const { push } = useRouter();
+
+  async function handleSign({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }) {
+    setIsSubmitting(true);
+    try {
+      await signInFn({
+        email,
+        password,
+      });
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+      toast.show({
+        title: isAppError
+          ? error.message
+          : "Nao foi possivel criar a conta tente novamente mais tarde",
+        placement: "top",
+        bgColor: "red.500",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   function handleCreate() {
     push("/(auth)/signUp");
@@ -39,14 +87,37 @@ export default function signIn() {
             Acesse a conta
           </Heading>
 
-          <Input
-            placeholder="E-mail"
-            keyboardType="email-address"
-            autoCapitalize="none"
+          <Controller
+            control={control}
+            name="email"
+            render={({ field: { onChange, value } }) => (
+              <Input
+                placeholder="E-mail"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                onChangeText={onChange}
+                value={value}
+              />
+            )}
           />
-          <Input placeholder="Senha" secureTextEntry />
+          <Controller
+            control={control}
+            name="password"
+            render={({ field: { onChange, value } }) => (
+              <Input
+                placeholder="Senha"
+                secureTextEntry
+                onChangeText={onChange}
+                value={value}
+              />
+            )}
+          />
 
-          <Button title="Acessar" />
+          <Button
+            title="Acessar"
+            onPress={handleSubmit(handleSign)}
+            isLoading={isSubmiting}
+          />
         </Center>
 
         <Center mt={24}>

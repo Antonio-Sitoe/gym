@@ -1,14 +1,20 @@
-import { Tabs } from "expo-router";
+import { Redirect, Tabs, useRouter } from "expo-router";
 import { useTheme } from "native-base";
 
 import Home from "@/assets/home.svg";
 import HistorySvg from "@/assets/history.svg";
 import ProfileSvg from "@/assets/profile.svg";
 import { Platform, StatusBar } from "react-native";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function TabLayout() {
+  const { user } = useAuth();
   const { sizes, colors } = useTheme();
   const iconSize = sizes[6];
+
+  if (!user?.id) {
+    return <Redirect href="/" />;
+  }
 
   return (
     <>
@@ -18,7 +24,7 @@ export default function TabLayout() {
         translucent
       />
       <Tabs
-       initialRouteName="home"
+        initialRouteName="home"
         screenOptions={{
           tabBarActiveTintColor: "red",
           headerShown: false,

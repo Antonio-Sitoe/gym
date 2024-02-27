@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { StatusBar } from "react-native";
 import { THEME } from "../theme";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { AuthStorage } from "@/contexts/AuthContext";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -47,17 +48,19 @@ export default function RootLayout() {
 function RootLayoutNav() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: THEME.colors.gray[700] }}>
-      <NativeBaseProvider theme={THEME}>
-        <StatusBar
-          barStyle="dark-content"
-          backgroundColor="transparent"
-          translucent
-        />
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(auth)" />
-          <Stack.Screen name="tabs" />
-        </Stack>
-      </NativeBaseProvider>
+      <AuthStorage>
+        <NativeBaseProvider theme={THEME}>
+          <StatusBar
+            barStyle="dark-content"
+            backgroundColor="transparent"
+            translucent
+          />
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="(auth)" />
+            <Stack.Screen name="tabs" />
+          </Stack>
+        </NativeBaseProvider>
+      </AuthStorage>
     </SafeAreaView>
   );
 }
