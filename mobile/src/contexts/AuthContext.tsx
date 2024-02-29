@@ -1,10 +1,18 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { UserTYpe } from "@/dtos/userDTO";
 import { api } from "@/lib/axios";
-import { removeUser, storageUserSave, userGet } from "@/storage/user";
+import {
+  getToekn,
+  removeUser,
+  setToken,
+  storageAuthTokenRemove,
+  storageUserSave,
+  userGet,
+} from "@/storage/user";
 
 export type AuthContextDataProps = {
   user: UserTYpe;
+
   loadUser: boolean;
   signInFn: (params: { email: string; password: string }) => Promise<void>;
   signOut: () => Promise<void>;
@@ -26,16 +34,39 @@ export const AuthStorage = ({ children }: { children: React.JSX.Element }) => {
     try {
       const { data } = await api.post<{
         user: UserTYpe;
+        token: string;
       }>("/sessions", {
         email,
         password,
       });
-      if (data?.user) {
+      if (data?.user && data?.token) {
         setUser(data?.user);
-        storageUserSave(data?.user);
+        await storageUserAndTokenSave(data.user, data.token);
       }
     } catch (error) {
       console.log(error);
+    }
+  }
+
+  async function userAndTokenUpdate(userData: UserTYpe, token: string) {
+    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+    setUser(userData);
+  }
+
+  async function storageUserAndTokenSave(
+    userData: UserTYpe,
+    token: string,
+    // refresh_token: string
+  ) {
+    try {
+      setLoadUser(true);
+      await storageUserSave(userData);
+      await setToken(token);
+    } catch (error) {
+      throw error;
+    } finally {
+      setLoadUser(false);
     }
   }
 
@@ -44,6 +75,7 @@ export const AuthStorage = ({ children }: { children: React.JSX.Element }) => {
       setLoadUser(true);
       setUser({} as UserTYpe);
       await removeUser();
+      await storageAuthTokenRemove();
     } catch (error) {
     } finally {
       setLoadUser(false);
@@ -53,7 +85,8 @@ export const AuthStorage = ({ children }: { children: React.JSX.Element }) => {
   async function loadUserData() {
     setLoadUser(true);
     const user = await userGet();
-    if (user) setUser(user);
+    const token = await getToekn();
+    if (user && token) userAndTokenUpdate(user, token);
     setLoadUser(false);
   }
 
@@ -67,7 +100,7 @@ export const AuthStorage = ({ children }: { children: React.JSX.Element }) => {
         user,
         signInFn,
         loadUser,
-        signOut
+        signOut,
       }}
     >
       {children}

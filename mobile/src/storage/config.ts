@@ -1,3 +1,4 @@
 const USER_STORAGE = "@IGNITE:user";
+const AUTH_TOKEN_STORAGE = "@IGNITE:GYM:token";
 
-export { USER_STORAGE };
+export { USER_STORAGE, AUTH_TOKEN_STORAGE };
